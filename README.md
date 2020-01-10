@@ -7,7 +7,7 @@
 
 # 目录
 
-├── my-lvue.html       //   展示lvue效果
+│  my-lvue.html       //   展示lvue效果
 │  
 │  lvue.js            //   lvue对象、观察者Observer对象、更新触发器Watcher
 │  
