@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <div id="app">
+    <p>{{count}}</p>
+    <p l-text="count"></p>
+    <p l-html="desc"></p>
+  </div>
+  <script src="lCompile.js"></script>
+  <script src="lvue.js"></script>
+  <script>
+    const app = new LVue({
+      el:'#app',
+      data:{
+        count:1,
+        desc:'<span style="color:red">这是lvue？</span>'
+      }
+    })
+    setInterval(() => {
+      app.count++
+    }, 1000);
+  </script>
+</body>
+</html>
