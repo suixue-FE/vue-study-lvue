@@ -37,15 +37,31 @@ class Compile {
     Array.from(nodeAttrs).forEach(attr=>{
       let attrName = attr.name
       let exp = attr.value
+      console.log(exp)
       // 属性名以 l- 开头时处理
       if (attrName.indexOf("l-")===0){
         let dir = attrName.substring(2)
         // 拿出后面的html、text 等，html、text会被在内部定义方法
         this[dir]&&this[dir](node,exp)
       }
+      // 时间处理
+      if(this.isEvent(attrName)){
+        // @click = onClick
+        const dir = attrName.substring(1) // click
+        
+        // 事件监听
+        this.eventHandler(node,exp,dir)
+      }
     })
   }
-
+  isEvent(dir){
+    return dir.indexOf('@') == 0
+  }
+  eventHandler(node,exp,dir){
+    const fn = this.$vm.$options.methods &&
+    this.$vm.$options.methods[exp]
+    node.addEventListener(dir,fn.bind(this.$vm))
+  }
   // node为文本时处理
   compileText(node){
     this.update(node,RegExp.$1,'text')
@@ -59,6 +75,16 @@ class Compile {
   //  初始化时执行 更新方法 目的是 update中创建了Watcher，可以传入改变方法，在数据监听时就可执行了
   html(node,exp){
     this.update(node,exp,'html')
+  }
+
+  model(node,exp){
+    // update方法只完成赋值和更新
+      this.update(node,exp,'model')
+    // 所以还需要事件监听
+      node.addEventListener('input',e=>{
+        // 将新的值赋值给数据即可
+        this.$vm[exp]=e.target.value
+      })
   }
 
   // 创建更新函数，和watcher绑定
@@ -78,5 +104,10 @@ class Compile {
   // v-html 绑定html方法
   htmlUpdater(node,val){
     node.innerHTML = val
+  }
+
+  modelUpdater(node,val){
+    // 多用在表单元素，暂时只考虑表单元素赋值
+    node.value = val
   }
 }

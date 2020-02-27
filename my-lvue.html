@@ -6,9 +6,10 @@
 </head>
 <body>
   <div id="app">
-    <p>{{count}}</p>
+    <p @click="add">{{count}}</p>
     <p l-text="count"></p>
     <p l-html="desc"></p>
+    <input type="text" l-model="desc">
   </div>
   <script src="lCompile.js"></script>
   <script src="lvue.js"></script>
@@ -18,11 +19,16 @@
       data:{
         count:1,
         desc:'<span style="color:red">这是lvue？</span>'
+      },
+      methods:{
+        add(){
+          this.count++
+        }
       }
     })
-    setInterval(() => {
-      app.count++
-    }, 1000);
+    // setInterval(() => {
+    //   app.count++
+    // }, 1000);
   </script>
 </body>
 </html>

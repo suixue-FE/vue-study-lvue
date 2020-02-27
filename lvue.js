@@ -1,4 +1,5 @@
 
+// 对象的响应式
 function defineReactive(obj,key,val){
   observe(val)
   const dep = new Dep()
@@ -17,6 +18,18 @@ function defineReactive(obj,key,val){
   })
 }
 
+// 数组的响应式
+const arrayProtoBF = Array.prototype
+// 备份一份，修改备份
+const arrayProto = Object.create(arrayProtoBF);
+['push','pop','shift','unshift'].forEach(method=>{
+  arrayProto[method] = function(){
+    // 执行数组原有方法应该执行的操作
+    arrayProtoBF[method].apply(this,arguments)
+    // 增加代理相关操作，通知更新
+      console.log('数组执行'+ method)
+  }
+})
 
 class LVue{
   constructor(options){
@@ -47,7 +60,16 @@ function proxy(vm,str) {
 function observe(obj) {
   if (typeof obj !=='object' || obj ===null){
     return
-  } else {
+  } 
+  if(Array.isArray(obj)){
+    // 替换原型
+    obj._proto_ = arrayProto
+    // 对数组内部元素执行响应化操作
+    const keys = Object.keys(obj)
+    for(let i in keys){
+      observe(obj[i])
+    }
+  }else {
     new Observe(obj)
   }
 }
